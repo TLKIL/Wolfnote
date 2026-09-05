@@ -4,399 +4,215 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101318">
-<link rel="manifest" href="./manifest.webmanifest">
-<link rel="icon" href="./icon.svg" type="image/svg+xml">
 <title>WolfNote 狼人杀记录器</title>
 <style>
-:root{
-  --bg:#0f1115;--panel:#171a20;--card:#1e232c;--line:#303744;--text:#f4f6f8;--muted:#9ca6b5;
-  --blue:#4f8cff;--green:#31b978;--red:#e35d5d;--yellow:#dda33e;--purple:#9b74d6;--cyan:#46a9b8;--orange:#d97941;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
-button,select,input,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:11px}
-button{cursor:pointer;padding:9px 12px;min-height:42px}
-select,input,textarea{width:100%;padding:10px 11px;min-height:42px}
-textarea{resize:vertical}
-.app{max-width:1180px;margin:auto;padding:16px}
-.header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-h1{font-size:22px;margin:0 0 4px}
-.sub,.hint{font-size:12px;color:var(--muted)}
-.privacy{padding:8px 10px;border-radius:10px;border:1px solid #29483a;background:#14261e;color:#bce8cf;font-size:12px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin-bottom:12px}
-.title{font-weight:700;font-size:15px;margin-bottom:10px}
-.toolbar,.row,.chips,.legend{display:flex;gap:8px;flex-wrap:wrap}
-.primary{background:#234b83;border-color:#376aac}
-.danger{background:#51272a;border-color:#77363b}
-.success{background:#173f2d;border-color:#2a694b}
-.warn{background:#493719;border-color:#72552a}
-.mode-wrap{max-width:760px;margin:36px auto}
-.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.mode-card{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}
-.mode-card h2{margin:0 0 8px;font-size:20px}
-.mode-card p{color:var(--muted);font-size:13px;line-height:1.55}
-.mode-card button{width:100%;margin-top:10px}
-.hidden{display:none!important}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.form-grid{display:grid;grid-template-columns:1fr 1.15fr 1fr auto;gap:8px;align-items:end}
-label{font-size:12px;color:var(--muted)}
-label select,label input,label textarea{margin-top:5px}
-.status-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
-.status-btn{padding:8px 5px}
-.status-num{font-weight:800;display:block}
-.status-lab{font-size:10px;color:var(--muted);display:block;margin-top:2px}
-.good{background:rgba(49,185,120,.16);border-color:rgba(49,185,120,.48)}
-.wolf{background:rgba(227,93,93,.17);border-color:rgba(227,93,93,.5)}
-.watch{background:rgba(221,163,62,.17);border-color:rgba(221,163,62,.5)}
-.green{background:rgba(49,185,120,.15);border-color:rgba(49,185,120,.4)}
-.red{background:rgba(227,93,93,.17);border-color:rgba(227,93,93,.45)}
-.yellow{background:rgba(221,163,62,.17);border-color:rgba(221,163,62,.45)}
-.blue{background:rgba(79,140,255,.17);border-color:rgba(79,140,255,.45)}
-.purple{background:rgba(155,116,214,.17);border-color:rgba(155,116,214,.45)}
-.cyan{background:rgba(70,169,184,.16);border-color:rgba(70,169,184,.42)}
-.orange{background:rgba(217,121,65,.16);border-color:rgba(217,121,65,.42)}
-.badge{padding:4px 8px;border-radius:999px;font-size:11px;border:1px solid var(--line)}
-.records{display:grid;gap:7px;margin-top:10px}
-.record{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border:1px solid var(--line);border-radius:11px;padding:9px 10px}
-.record .who{font-weight:800}
-.record .meta{margin-left:auto;font-size:10px;color:var(--muted)}
-.record .note{width:100%;font-size:12px;color:#cad2dc;border-top:1px dashed var(--line);padding-top:6px}
-.empty{border:1px dashed var(--line);border-radius:11px;padding:18px;text-align:center;color:var(--muted);font-size:13px}
-.judge-table{display:grid;gap:7px}
-.judge-player{display:grid;grid-template-columns:52px 1fr 90px 86px;gap:7px;align-items:center;border:1px solid var(--line);border-radius:11px;padding:8px}
-.judge-player .n{font-weight:800;text-align:center}
-.dead{opacity:.5}
-.logline{display:flex;gap:7px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:7px 0;font-size:13px}
-.logline:last-child{border-bottom:0}
-.phase{font-weight:700;color:#cbd5e1}
-.small{font-size:11px;color:var(--muted)}
-.self-badge{padding:6px 9px;border-radius:999px;background:rgba(79,140,255,.16);border:1px solid rgba(79,140,255,.4);font-size:12px}
-@media(max-width:820px){
- .grid2,.mode-grid{grid-template-columns:1fr}
- .form-grid{grid-template-columns:1fr 1fr}
- .form-grid button{grid-column:1/-1}
- .status-grid{grid-template-columns:repeat(5,1fr)}
- .judge-player{grid-template-columns:46px 1fr 78px}
- .judge-player .judge-role{grid-column:2/4}
-}
-@media(max-width:480px){
- .app{padding:10px}
- .form-grid{grid-template-columns:1fr}
- .status-grid{grid-template-columns:repeat(4,1fr)}
- .judge-player{grid-template-columns:42px 1fr 74px}
-}
+:root{--bg:#101318;--panel:#171c23;--card:#202732;--line:#344050;--text:#f3f6f9;--muted:#9ea9b7;--accent:#4e8cff;--green:#38b77b;--red:#df6168;--yellow:#d6a23f;--purple:#9b78d2;--cyan:#4da9b9}
+*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,select,input,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:14px}button{cursor:pointer;min-height:50px;padding:10px 14px}button:disabled{opacity:.3;cursor:not-allowed}select,input,textarea{width:100%;padding:11px 13px;min-height:48px}textarea{resize:vertical}
+.app{max-width:1080px;margin:0 auto;padding:16px}.header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}.brand{font-size:24px;font-weight:850}.sub{font-size:12px;color:var(--muted);margin-top:4px}.privacy{font-size:11px;color:#bce6cd;border:1px solid #2b503d;background:#14271f;border-radius:11px;padding:8px 10px}
+.hidden{display:none!important}.panel,.mode-card,.judge-main,.judge-bar{background:var(--panel);border:1px solid var(--line);border-radius:18px}.panel{padding:16px;margin-bottom:12px}.mode-screen{max-width:820px;margin:34px auto}.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mode-card{padding:22px}.mode-card h2{margin:0 0 8px}.mode-card p{font-size:13px;color:var(--muted);line-height:1.55}.mode-card button{width:100%}.primary{background:#24518b;border-color:#3f76bd}.success{background:#184630;border-color:#36765a}.danger{background:#582b31;border-color:#814048}.warn{background:#523c1d;border-color:#765b2e}
+.row,.toolbar{display:flex;gap:8px;flex-wrap:wrap}.toolbar{margin-bottom:12px}.setup-grid{display:grid;grid-template-columns:1fr 150px auto;gap:10px;align-items:end}.setup-grid.judge{grid-template-columns:1fr auto}.board-card{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:12px;margin-top:10px;font-size:13px;color:var(--muted);line-height:1.5}
+/* player - mobile first */
+#playerApp{max-width:820px;margin:0 auto;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+.player-mobile-top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:9px 0;background:rgba(16,19,24,.94);backdrop-filter:blur(12px)}
+.player-mobile-title{text-align:center;min-width:0}.player-mobile-title strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}.player-mobile-title .sub{margin-top:1px}
+.player-mobile-top button{min-height:42px;padding:7px 10px;font-size:12px}
+.player-stage{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;margin-bottom:12px;padding:12px 13px;background:linear-gradient(180deg,#1b222c,#171c23);border:1px solid var(--line);border-radius:16px}
+.player-stage label{font-size:11px;color:var(--muted)}.player-stage select{margin-top:4px;min-height:44px;padding:8px 10px;font-size:16px;font-weight:700}.player-stage button{min-height:44px;padding:8px 12px}
+.player-pane{display:none}.player-pane.active{display:block}
+.player-pane .panel{margin-bottom:10px}
+.mobile-section-title{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:10px}.mobile-section-title strong{font-size:17px}.mobile-section-title .sub{max-width:65%;text-align:right}
+.quick-form{display:grid;grid-template-columns:.78fr 1.22fr .78fr;gap:7px;align-items:end}.quick-form label{font-size:10px;color:var(--muted)}.quick-form select{margin-top:4px;min-height:48px;padding:8px 8px;font-size:15px}.quick-form #pRecord{grid-column:1/-1;min-height:56px;font-size:17px;font-weight:800;margin-top:2px}
+.quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.quick-actions button{min-height:43px;padding:6px 5px;font-size:11px}
+.recent-title{display:flex;justify-content:space-between;align-items:center;margin:15px 0 8px}.recent-title button{min-height:34px;padding:5px 9px;font-size:11px}
+.player-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.player-card{border:1px solid var(--line);background:var(--card);border-radius:15px;padding:7px;min-width:0}.player-card.eliminated{background:#16191e;border-color:#292f38;color:#8b94a0}.player-card.eliminated .judge-btn{filter:grayscale(1);opacity:.58}.player-card.eliminated .role-select{opacity:1;color:var(--text);background:#202732;border-color:#465162;filter:none}
+.judge-btn{width:100%;min-height:58px;padding:6px 4px;margin-bottom:6px}.judge-btn strong{display:block;font-size:17px}.judge-btn small{display:block;font-size:10px;color:var(--muted);margin-top:2px}.good{background:rgba(56,183,123,.14);border-color:rgba(56,183,123,.5)}.bad{background:rgba(223,97,104,.15);border-color:rgba(223,97,104,.5)}.watch{background:rgba(214,162,63,.14);border-color:rgba(214,162,63,.5)}
+.role-select{min-height:39px;padding:6px 7px;font-size:11px;margin-bottom:6px}.player-card-actions{display:grid;grid-template-columns:1fr auto;gap:5px}.life-btn,.view-btn{min-height:34px;padding:5px 6px;font-size:10px}.view-btn{min-width:48px}.player-card.eliminated .life-btn{background:#3b2529;border-color:#604047;color:#d9c5c8}
+.records{display:grid;gap:7px}.record{display:flex;align-items:center;gap:7px;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:9px 10px;font-size:13px}.record strong{font-size:14px}.badge{border-radius:999px;padding:4px 8px;font-size:11px;border:1px solid var(--line)}.green{background:rgba(56,183,123,.14);border-color:rgba(56,183,123,.4)}.red{background:rgba(223,97,104,.14);border-color:rgba(223,97,104,.4)}.yellow{background:rgba(214,162,63,.14);border-color:rgba(214,162,63,.4)}.blue{background:rgba(78,140,255,.14);border-color:rgba(78,140,255,.4)}.purple{background:rgba(155,120,210,.14);border-color:rgba(155,120,210,.4)}.cyan{background:rgba(77,169,185,.14);border-color:rgba(77,169,185,.4)}.empty{border:1px dashed var(--line);border-radius:12px;padding:16px;text-align:center;color:var(--muted);font-size:12px}
+.record-filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.record-filters label{font-size:10px;color:var(--muted)}.record-filters select{margin-top:4px;min-height:44px;padding:7px 9px;font-size:14px}
+.player-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.player-tools button{min-height:44px;font-size:12px}
+.player-bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:50;width:min(820px,100%);display:grid;grid-template-columns:repeat(3,1fr);gap:0;padding:7px 10px calc(7px + env(safe-area-inset-bottom));background:rgba(18,22,28,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.player-tab{border:0;background:transparent;border-radius:12px;min-height:52px;padding:6px 4px;color:var(--muted);font-size:11px}.player-tab strong{display:block;font-size:15px;margin-bottom:2px}.player-tab.active{background:#253248;color:white}
+.player-flash{position:fixed;left:50%;bottom:calc(78px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;background:#223328;border:1px solid #3b6b4e;border-radius:999px;padding:8px 13px;font-size:12px;box-shadow:0 8px 30px rgba(0,0,0,.35);pointer-events:none;opacity:0;transition:.15s}.player-flash.show{opacity:1}
+
+/* judge */
+.judge-bar{padding:11px 13px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.judge-main{padding:22px;min-height:590px}.stage-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}.stage-chip{border:1px solid var(--line);border-radius:999px;padding:5px 9px;font-size:11px;color:var(--muted)}.stage-chip.on{border-color:var(--accent);color:var(--text);background:rgba(78,140,255,.13)}h1{font-size:29px;margin:0 0 8px}.help{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:18px}.info{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:13px;margin-bottom:18px;font-size:14px;line-height:1.5}.stage-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}.num,.special{min-height:68px;font-weight:800;font-size:17px;padding:7px}.num small{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:3px}.selected{border-color:var(--accent)!important;background:rgba(78,140,255,.16)!important}.special{font-size:14px;background:rgba(155,120,210,.12)}.stage-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.stage-actions.two{grid-template-columns:repeat(2,1fr)}.footer{display:flex;justify-content:space-between;gap:9px;flex-wrap:wrap;margin-top:22px}.footer>div{display:flex;gap:8px;flex-wrap:wrap}.vote-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}.counts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.count{border:1px solid var(--line);border-radius:12px;padding:9px;text-align:center}.count strong{display:block;font-size:19px}.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.summary-item{border:1px solid var(--line);border-radius:12px;padding:10px}.summary-item small{display:block;color:var(--muted);font-size:10px}.summary-item strong{display:block;margin-top:4px}.timeline{margin-top:14px}.timeline details{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:11px 13px}.timeline summary{cursor:pointer;font-weight:700}.log{display:grid;gap:6px;margin-top:9px}.log div{border-top:1px solid var(--line);padding-top:6px;font-size:12px;color:#cbd2dc}
+.fatal{position:fixed;inset:0;z-index:9999;background:#0e1116;padding:24px;color:white;overflow:auto}.fatal-box{max-width:760px;margin:50px auto;border:1px solid #663d43;background:#281a1d;border-radius:18px;padding:20px}.fatal pre{white-space:pre-wrap;color:#e5c4c8;font-size:12px}
+@media(max-width:800px){.mode-grid{grid-template-columns:1fr}.setup-grid{grid-template-columns:1fr 140px}.setup-grid.judge{grid-template-columns:1fr}.setup-grid button{grid-column:1/-1}.player-grid{grid-template-columns:repeat(3,1fr)}.stage-grid{grid-template-columns:repeat(4,1fr)}.stage-actions{grid-template-columns:1fr}.stage-actions.two{grid-template-columns:1fr 1fr}.counts{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:440px){.app{padding:10px}.setup-grid{grid-template-columns:1fr}.player-grid{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:repeat(4,1fr)}.judge-main{padding:15px}.stage-grid{grid-template-columns:repeat(3,1fr)}.counts{grid-template-columns:repeat(2,1fr)}.privacy{display:none}.header{margin-bottom:7px}.brand{font-size:20px}}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <div><h1>WolfNote 狼人杀记录器</h1><div class="sub">玩家记录 + 法官控场</div></div>
-    <div class="privacy">🔒 数据只保存在当前设备浏览器，不与其他访问者共享。</div>
+<noscript><div style="padding:24px;color:white">这个工具需要浏览器启用 JavaScript。</div></noscript>
+<div id="fatal" class="fatal hidden"><div class="fatal-box"><h2>页面遇到错误，但不会白屏</h2><p>请把下面错误信息发给我，我可以直接修复。</p><pre id="fatalText"></pre><button onclick="location.reload()">重新加载</button></div></div>
+<div class="app" id="appRoot">
+ <div class="header"><div><div class="brand">WolfNote 狼人杀记录器</div><div class="sub">最终版 · 移动端玩家优化 + 法官单阶段控场</div></div><div class="privacy">🔒 数据只保存在当前浏览器</div></div>
+ <section id="modeScreen" class="mode-screen"><div class="mode-grid">
+  <div class="mode-card"><h2>我是玩家</h2><p>选择板子和自己的号码，按天记录发言、身份判断和淘汰状态。</p><button id="goPlayer" class="primary">进入玩家模式</button></div>
+  <div class="mode-card"><h2>我是法官</h2><p>按板子自动主持夜晚、警长竞选、死亡公布、白天、放逐投票和狼人自爆。</p><button id="goJudge" class="success">进入法官模式</button></div>
+ </div></section>
+
+ <section id="playerSetup" class="panel hidden"><h2>玩家模式</h2><div class="setup-grid"><label>板子<select id="pBoard"></select></label><label>我是<select id="pSelf"></select></label><button id="pStart" class="primary">开始记录</button></div><div id="pDesc" class="board-card"></div><button id="pBack" style="margin-top:10px">返回首页</button></section>
+
+ <main id="playerApp" class="hidden">
+  <div class="player-mobile-top">
+   <button id="pHome">首页</button>
+   <div class="player-mobile-title"><strong id="pBoardTitle"></strong><div id="pSelfLabel" class="sub"></div></div>
+   <button id="pUndo">撤销</button>
   </div>
+  <div class="player-stage"><label>当前阶段<select id="pDay"></select></label><button id="pNextDay" class="primary">下一天 ›</button></div>
 
-  <section id="modeScreen" class="mode-wrap">
-    <div class="mode-grid">
-      <div class="mode-card">
-        <h2>我是玩家</h2>
-        <p>记录发言、金水、查杀、站边、票型和自己的判断。进入前选择自己的号码。</p>
-        <button id="choosePlayer" class="primary">进入玩家模式</button>
-      </div>
-      <div class="mode-card">
-        <h2>我是法官</h2>
-        <p>管理整局身份、存活状态、夜间行动、死亡、放逐、警徽和轮次。</p>
-        <button id="chooseJudge" class="success">进入法官模式</button>
-      </div>
+  <section id="pPaneRecord" class="player-pane active">
+   <section class="panel">
+    <div class="mobile-section-title"><div><strong>快速记录</strong><div class="sub">尽量一屏完成操作</div></div></div>
+    <div class="quick-form">
+     <label>发言人<select id="pSpeaker"></select></label>
+     <label>行为<select id="pAction"><option>给金水</option><option>查杀</option><option>保</option><option>踩</option><option>怀疑</option><option>认好</option><option>站边</option><option>投票给</option><option>对跳</option><option>警徽流</option></select></label>
+     <label>目标<select id="pTarget"></select></label>
+     <button id="pRecord" class="primary">＋ 记录这条发言</button>
     </div>
+    <div class="quick-actions"><button data-pa="跳预言家">跳预言家</button><button data-pa="跳女巫">跳女巫</button><button data-pa="跳猎人">跳猎人</button><button data-pa="跳守卫">跳守卫</button><button data-pa="跳骑士">跳骑士</button><button data-pa="认民">认民</button><button data-pa="自爆">自爆</button></div>
+    <div class="recent-title"><strong>刚刚记录</strong><button id="pSeeAll">查看全部</button></div>
+    <div id="pRecentRecords" class="records"></div>
+   </section>
   </section>
 
-  <section id="playerSetup" class="panel hidden">
-    <div class="title">选择你的号码</div>
-    <div class="row">
-      <select id="setupCount" style="max-width:160px">
-        <option value="9">9人局</option><option value="10">10人局</option><option value="12">12人局</option><option value="13" selected>13人局</option>
-      </select>
-      <select id="selfNumber" style="max-width:160px"></select>
-      <button id="enterPlayer" class="primary">开始记录</button>
-      <button class="backMode">返回</button>
-    </div>
+  <section id="pPanePlayers" class="player-pane">
+   <section class="panel">
+    <div class="mobile-section-title"><div><strong>号码 / 身份</strong><div class="sub">出局变灰，但身份仍可修改</div></div></div>
+    <div id="pPlayers" class="player-grid"></div>
+   </section>
   </section>
 
-  <main id="playerApp" class="hidden">
-    <div class="toolbar">
-      <span id="selfBadge" class="self-badge"></span>
-      <button id="playerHome">返回首页</button>
-      <button id="playerNextRound">下一轮</button>
-      <button id="playerUndo">撤销上一条</button>
-      <button id="playerExport">导出</button>
-      <button id="playerImport">导入</button>
-      <input id="playerImportFile" type="file" accept=".json" hidden>
+  <section id="pPaneRecords" class="player-pane">
+   <section class="panel">
+    <div class="mobile-section-title"><div><strong>查看记录</strong><div class="sub">他说了谁 + 谁说了他</div></div></div>
+    <div class="record-filters">
+     <label>玩家<select id="pFilter"></select></label>
+     <label>日期<select id="pRecordDay"><option value="0">全部天数</option></select></label>
     </div>
-
-    <section class="panel">
-      <div class="title">快速记录发言 · <span id="playerRoundText">第1轮</span></div>
-      <form id="quickForm" class="form-grid">
-        <label>发言人<select id="speaker"></select></label>
-        <label>行为<select id="action">
-          <option>给金水</option><option>查杀</option><option>保</option><option>踩</option><option>怀疑</option>
-          <option>认好</option><option>站边</option><option>投票给</option><option>对跳</option><option>警徽流</option>
-        </select></label>
-        <label>目标号码<select id="target"></select></label>
-        <button class="primary" type="submit">记录</button>
-      </form>
-      <div class="chips" style="margin-top:10px">
-        <button class="selfAction" data-action="跳预言家">跳预言家</button>
-        <button class="selfAction" data-action="跳女巫">跳女巫</button>
-        <button class="selfAction" data-action="跳猎人">跳猎人</button>
-        <button class="selfAction" data-action="跳守卫">跳守卫</button>
-        <button class="selfAction" data-action="跳骑士">跳骑士</button>
-        <button class="selfAction" data-action="认民">认民</button>
-        <button class="selfAction" data-action="自爆">自爆</button>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="title">号码判断</div>
-      <div id="statusGrid" class="status-grid"></div>
-      <div class="hint" style="margin-top:8px">点击：未判断 → 好人 → 狼 → 待观察。点号码也会切换下方查看对象。</div>
-    </section>
-
-    <div class="grid2">
-      <section class="panel">
-        <div class="row" style="justify-content:space-between;align-items:end">
-          <div><div class="title" style="margin-bottom:2px">按号码查看相关记录</div><div class="hint">显示他说了谁 + 谁说了他。</div></div>
-          <label style="max-width:150px">查看<select id="filterPlayer"></select></label>
-        </div>
-        <div class="legend" style="margin-top:10px">
-          <span class="badge green">金水/保/认好</span><span class="badge red">查杀</span><span class="badge yellow">踩/怀疑/对跳</span>
-          <span class="badge blue">站边</span><span class="badge purple">投票/警徽流</span><span class="badge cyan">跳身份</span><span class="badge orange">自爆</span>
-        </div>
-        <div id="playerRecords" class="records"></div>
-      </section>
-      <section class="panel">
-        <div class="title">补充记录</div>
-        <label>当前发言人补充<textarea id="extra" rows="4" placeholder="例如：发言前后矛盾、像冲锋狼……"></textarea></label>
-        <button id="addExtra" style="margin-top:8px">添加</button>
-        <div class="title" style="margin-top:16px">本局备注</div>
-        <textarea id="playerGameNote" rows="5" placeholder="警徽、夜间信息、特殊事件……"></textarea>
-      </section>
-    </div>
-  </main>
-
-  <section id="judgeSetup" class="panel hidden">
-    <div class="title">创建法官对局</div>
-    <div class="row">
-      <select id="judgeCount" style="max-width:160px">
-        <option value="9">9人局</option><option value="10">10人局</option><option value="12">12人局</option><option value="13" selected>13人局</option>
-      </select>
-      <button id="enterJudge" class="success">开始控场</button>
-      <button class="backMode">返回</button>
-    </div>
+    <div id="pRecords" class="records"></div>
+    <div class="player-tools"><button id="pExport">导出记录</button><button id="pNextDay2" class="primary">进入下一天</button></div>
+   </section>
   </section>
 
-  <main id="judgeApp" class="hidden">
-    <div class="toolbar">
-      <button id="judgeHome">返回首页</button>
-      <button id="judgeNextPhase" class="primary">推进阶段</button>
-      <button id="judgeExport">导出</button>
-      <button id="judgeReset" class="danger">新开一局</button>
-    </div>
+  <nav class="player-bottom-nav" aria-label="玩家模式导航">
+   <button class="player-tab active" data-ptab="record"><strong>＋</strong>记录</button>
+   <button class="player-tab" data-ptab="players"><strong>◎</strong>号码</button>
+   <button class="player-tab" data-ptab="records"><strong>≡</strong>记录本</button>
+  </nav>
+  <div id="pFlash" class="player-flash">已记录</div>
+ </main>
 
-    <section class="panel">
-      <div class="row" style="justify-content:space-between;align-items:center">
-        <div>
-          <div class="title" style="margin-bottom:2px">法官控制台</div>
-          <div class="hint">当前：<span id="phaseText" class="phase"></span> · 第<span id="judgeDayText">1</span>天</div>
-        </div>
-        <label style="max-width:170px">警长<select id="sheriffSelect"></select></label>
-      </div>
-    </section>
+ <section id="judgeSetup" class="panel hidden"><h2>法官模式</h2><div class="setup-grid judge"><label>板子<select id="jBoard"></select></label><button id="jStart" class="success">开始对局</button></div><div id="jDesc" class="board-card"></div><button id="jBack" style="margin-top:10px">返回首页</button></section>
 
-    <div class="grid2">
-      <section class="panel">
-        <div class="title">玩家身份与存活</div>
-        <div id="judgePlayers" class="judge-table"></div>
-      </section>
-
-      <section class="panel">
-        <div class="title">快速事件</div>
-        <div class="form-grid" style="grid-template-columns:1fr 1fr auto">
-          <label>事件<select id="judgeEvent">
-            <option>死亡</option><option>放逐</option><option>刀</option><option>毒</option><option>救</option><option>守护</option>
-            <option>查验金水</option><option>查验查杀</option><option>猎人开枪</option><option>骑士决斗</option><option>警徽移交</option>
-          </select></label>
-          <label>目标<select id="judgeTarget"></select></label>
-          <button id="addJudgeEvent" class="primary">记录</button>
-        </div>
-
-        <div class="title" style="margin-top:16px">自定义事件</div>
-        <label>内容<textarea id="judgeCustom" rows="3" placeholder="例如：3号警徽流先验8后验11；女巫首夜未救……"></textarea></label>
-        <button id="addJudgeCustom" style="margin-top:8px">添加</button>
-
-        <div class="title" style="margin-top:16px">本局总备注</div>
-        <textarea id="judgeNote" rows="4" placeholder="特殊板子、规则、遗言情况等"></textarea>
-      </section>
-    </div>
-
-    <section class="panel">
-      <div class="title">整局时间线</div>
-      <div id="judgeLog"></div>
-    </section>
-  </main>
+ <main id="judgeApp" class="hidden">
+  <div class="judge-bar"><div><strong id="jBoardName"></strong><div id="jDayNight" class="sub"></div></div><div class="row"><button id="jReset">重置当前阶段</button><button id="jRestart">重新开局</button><button id="jHome">首页</button></div></div>
+  <section class="judge-main"><div id="jChips" class="stage-chips"></div><h1 id="jTitle"></h1><div id="jHelp" class="help"></div><div id="jInfo" class="info"></div><div id="jContent"></div><div class="footer"><div><button id="jPrev">上一步</button></div><div><button id="jBoom" class="danger hidden">狼人自爆</button><button id="jNext" class="primary">下一步</button></div></div></section>
+  <div class="timeline"><details><summary>查看法官时间线</summary><div id="jLog" class="log"></div></details></div>
+ </main>
 </div>
-
 <script>
-(() => {
-const PKEY='wolfnote_player_v2', JKEY='wolfnote_judge_v2';
-const $=id=>document.getElementById(id);
-const roles=['未设定','平民','预言家','女巫','猎人','守卫','骑士','白狼王','狼人','混血儿','野孩子','其他'];
-
-function show(id){ ['modeScreen','playerSetup','playerApp','judgeSetup','judgeApp'].forEach(x=>$(x).classList.add('hidden')); $(id).classList.remove('hidden'); }
-function fillNums(sel,count,keep=1,includeNone=false){
-  sel.innerHTML='';
-  if(includeNone){ const o=document.createElement('option');o.value='0';o.textContent='无';sel.appendChild(o);}
-  for(let i=1;i<=count;i++){ const o=document.createElement('option');o.value=i;o.textContent=i+'号';sel.appendChild(o);}
-  sel.value=String(Math.min(Math.max(Number(keep)||1, includeNone?0:1),count));
-}
-function dl(obj,name){
-  const b=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}); const a=document.createElement('a');
-  a.href=URL.createObjectURL(b);a.download=name;a.click();URL.revokeObjectURL(a.href);
-}
-function actionClass(a){
-  if(['给金水','保','认好'].includes(a)) return 'green';
-  if(a==='查杀') return 'red';
-  if(['踩','怀疑','对跳'].includes(a)) return 'yellow';
-  if(a==='站边') return 'blue';
-  if(['投票给','警徽流'].includes(a)) return 'purple';
-  if(String(a).startsWith('跳')||a==='认民') return 'cyan';
-  if(a==='自爆') return 'orange';
-  return '';
-}
-
-/* ENTRY */
-$('choosePlayer').onclick=()=>{ fillNums($('selfNumber'),Number($('setupCount').value),1); show('playerSetup'); };
-$('chooseJudge').onclick=()=>show('judgeSetup');
-document.querySelectorAll('.backMode').forEach(b=>b.onclick=()=>show('modeScreen'));
-$('setupCount').onchange=()=>fillNums($('selfNumber'),Number($('setupCount').value),1);
-
-/* PLAYER */
-let ps={count:13,self:1,round:1,statuses:Array(13).fill(0),records:[],note:''};
-function loadP(){try{const r=localStorage.getItem(PKEY);if(r)ps=JSON.parse(r)}catch(e){}}
-function saveP(){localStorage.setItem(PKEY,JSON.stringify(ps))}
-function renderP(){
-  $('selfBadge').textContent='你是 '+ps.self+'号';
-  $('playerRoundText').textContent='第'+ps.round+'轮';
-  fillNums($('speaker'),ps.count,$('speaker').value||ps.self);
-  fillNums($('target'),ps.count,$('target').value||1);
-  fillNums($('filterPlayer'),ps.count,$('filterPlayer').value||ps.self);
-  $('playerGameNote').value=ps.note||'';
-  renderStatuses();renderPlayerRecords();
-}
-function renderStatuses(){
-  const box=$('statusGrid');box.innerHTML=''; const labs=['未判断','好人','狼','观察'];
-  for(let i=1;i<=ps.count;i++){
-    const st=ps.statuses[i-1]||0,b=document.createElement('button'); b.type='button';
-    b.className='status-btn '+(st===1?'good':st===2?'wolf':st===3?'watch':'');
-    b.innerHTML='<span class="status-num">'+i+'号</span><span class="status-lab">'+labs[st]+'</span>';
-    b.onclick=()=>{ps.statuses[i-1]=(st+1)%4;$('filterPlayer').value=String(i);saveP();renderStatuses();renderPlayerRecords()};
-    box.appendChild(b);
-  }
-}
-function renderPlayerRecords(){
-  const n=Number($('filterPlayer').value||ps.self),box=$('playerRecords'); box.innerHTML='';
-  const arr=ps.records.filter(r=>r.speaker===n||r.target===n).slice().reverse();
-  if(!arr.length){box.innerHTML='<div class="empty">'+n+'号暂无相关记录</div>';return}
-  arr.forEach(r=>{
-    const d=document.createElement('div');d.className='record '+actionClass(r.action);
-    d.innerHTML='<span class="who">'+r.speaker+'号</span><span class="badge '+actionClass(r.action)+'">'+r.action+'</span>'+
-      (r.target?'<span class="who">'+r.target+'号</span>':'')+'<span class="meta">第'+r.round+'轮</span>'+
-      (r.note?'<div class="note"></div>':'');
-    if(r.note)d.querySelector('.note').textContent=r.note; box.appendChild(d);
-  })
-}
-function addP(action,target=null,note=''){
-  ps.records.push({speaker:Number($('speaker').value),target:target?Number(target):null,action,note,round:ps.round});
-  $('filterPlayer').value=$('speaker').value;saveP();renderPlayerRecords();
-}
-$('enterPlayer').onclick=()=>{
-  const c=Number($('setupCount').value),s=Number($('selfNumber').value);
-  loadP();
-  if(ps.count!==c||ps.self!==s) ps={count:c,self:s,round:1,statuses:Array(c).fill(0),records:[],note:''};
-  else {ps.count=c;ps.self=s}
-  saveP();show('playerApp');renderP();
+(function(){
+'use strict';
+function fatal(err){var box=document.getElementById('fatal'),txt=document.getElementById('fatalText');if(box){box.classList.remove('hidden');txt.textContent=String(err&&err.stack?err.stack:err)}}
+window.addEventListener('error',function(e){fatal(e.error||e.message)});window.addEventListener('unhandledrejection',function(e){fatal(e.reason||'Promise rejection')});
+try{
+var $=function(id){var el=document.getElementById(id);if(!el)throw new Error('Missing element: '+id);return el};
+var BOARDS={
+ standard9:{name:'9人 · 标准板',count:9,wolfCount:3,whiteWolf:false,desc:'3狼人 + 预言家 + 女巫 + 猎人 + 3平民',firstNight:['hunter','wolves','witch','seer'],laterNight:['wolves','witch','seer'],daySkill:'hunter'},
+ hybrid10:{name:'10人 · 标准板 + 混血儿',count:10,wolfCount:3,whiteWolf:false,desc:'3狼人 + 预言家 + 女巫 + 猎人 + 混血儿 + 3平民',firstNight:['hybrid','hunter','wolves','witch','seer'],laterNight:['wolves','witch','seer'],daySkill:'hunter'},
+ classic12:{name:'12人 · 经典白狼王守卫',count:12,wolfCount:4,whiteWolf:true,desc:'3普狼 + 1白狼王 + 预言家 + 女巫 + 猎人 + 守卫 + 4平民',firstNight:['hunter','guard','wolves','witch','seer'],laterNight:['guard','wolves','witch','seer'],daySkill:'hunter'},
+ custom13:{name:'13人 · 白狼王守卫 + 骑士 + 混血儿',count:13,wolfCount:4,whiteWolf:true,desc:'3普狼 + 1白狼王 + 预言家 + 女巫 + 守卫 + 骑士 + 混血儿 + 4平民',firstNight:['hybrid','knight','guard','wolves','witch','seer'],laterNight:['guard','wolves','witch','seer'],daySkill:'knight'}
 };
-$('quickForm').onsubmit=e=>{e.preventDefault();addP($('action').value,$('target').value)};
-document.querySelectorAll('.selfAction').forEach(b=>b.onclick=()=>addP(b.dataset.action));
-$('addExtra').onclick=()=>{const v=$('extra').value.trim();if(v){addP('补充',null,v);$('extra').value=''}};
-$('filterPlayer').onchange=renderPlayerRecords;
-$('playerGameNote').oninput=e=>{ps.note=e.target.value;saveP()};
-$('playerNextRound').onclick=()=>{ps.round++;saveP();renderP()};
-$('playerUndo').onclick=()=>{ps.records.pop();saveP();renderPlayerRecords()};
-$('playerExport').onclick=()=>dl(ps,'wolfnote-player.json');
-$('playerImport').onclick=()=>$('playerImportFile').click();
-$('playerImportFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{ps=JSON.parse(r.result);saveP();renderP()}catch(e){alert('文件无效')}};r.readAsText(f)};
-$('playerHome').onclick=()=>show('modeScreen');
+var NIGHT_META={hybrid:['混血儿睁眼','确认混血儿，再确认他的榜样。'],knight:['骑士睁眼','第一晚只确认骑士号码。'],hunter:['猎人睁眼','第一晚只确认猎人号码。'],guard:['守卫睁眼','确认守卫后选择守护目标；最后一个按钮永远是“空守”。'],wolves:['狼人睁眼','第一晚确认狼人身份；有白狼王的板子会继续确认白狼王，然后选择刀口。最后一个按钮永远是“空刀”。'],witch:['女巫睁眼','确认女巫后选择解药、毒药或都不用。'],seer:['预言家睁眼','确认预言家后选择查验对象，系统自动显示金水 / 查杀。']};
+function boardEntries(){return Object.keys(BOARDS)}
+function fillBoards(sel){sel.innerHTML='';boardEntries().forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=BOARDS[k].name;sel.appendChild(o)})}
+function fillNums(sel,count,keep,labels){var old=Number(keep)||1;sel.innerHTML='';for(var n=1;n<=count;n++){var o=document.createElement('option');o.value=String(n);o.textContent=n+'号'+(labels&&labels[n-1]?'（'+labels[n-1]+'）':'');sel.appendChild(o)}sel.value=String(Math.min(Math.max(old,1),count))}
+function show(id){['modeScreen','playerSetup','playerApp','judgeSetup','judgeApp'].forEach(function(x){$(x).classList.add('hidden')});$(id).classList.remove('hidden')}
+fillBoards($('pBoard'));fillBoards($('jBoard'));$('pBoard').value='custom13';$('jBoard').value='custom13';
 
-/* JUDGE */
-let js={count:13,day:1,phaseIndex:0,sheriff:0,players:[],log:[],note:''};
-const phases=['首夜','第1天白天','第1天放逐','第2夜'];
-function freshJ(c){
-  return {count:c,day:1,phaseIndex:0,sheriff:0,players:Array.from({length:c},(_,i)=>({num:i+1,role:'未设定',alive:true})),log:[],note:''}
-}
-function loadJ(){try{const r=localStorage.getItem(JKEY);if(r)js=JSON.parse(r)}catch(e){}}
-function saveJ(){localStorage.setItem(JKEY,JSON.stringify(js))}
-function phaseName(){
-  if(js.phaseIndex===0)return '首夜';
-  const cycle=(js.phaseIndex-1)%3,day=Math.floor((js.phaseIndex-1)/3)+1;
-  return cycle===0?'第'+day+'天白天':cycle===1?'第'+day+'天放逐':'第'+(day+1)+'夜';
-}
-function renderJ(){
-  $('phaseText').textContent=phaseName();$('judgeDayText').textContent=js.day;
-  fillNums($('judgeTarget'),js.count,$('judgeTarget').value||1);
-  fillNums($('sheriffSelect'),js.count,js.sheriff||0,true);
-  $('judgeNote').value=js.note||'';
-  renderJudgePlayers();renderJudgeLog();
-}
-function renderJudgePlayers(){
-  const box=$('judgePlayers');box.innerHTML='';
-  js.players.forEach((p,i)=>{
-    const d=document.createElement('div');d.className='judge-player '+(p.alive?'':'dead');
-    const opts=roles.map(r=>'<option '+(p.role===r?'selected':'')+'>'+r+'</option>').join('');
-    d.innerHTML='<div class="n">'+p.num+'号</div><select class="judge-role">'+opts+'</select><button class="'+(p.alive?'':'danger')+'">'+(p.alive?'存活':'死亡')+'</button><button>查看</button>';
-    d.querySelector('select').onchange=e=>{p.role=e.target.value;saveJ()};
-    d.querySelectorAll('button')[0].onclick=()=>{p.alive=!p.alive;js.log.push({phase:phaseName(),text:p.num+'号 '+(p.alive?'恢复存活':'标记死亡')});saveJ();renderJ()};
-    d.querySelectorAll('button')[1].onclick=()=>{alert(p.num+'号：'+p.role+' / '+(p.alive?'存活':'死亡'))};
-    box.appendChild(d);
-  })
-}
-function addJ(text){js.log.push({phase:phaseName(),text});saveJ();renderJudgeLog()}
-function renderJudgeLog(){
-  const box=$('judgeLog');box.innerHTML='';
-  if(!js.log.length){box.innerHTML='<div class="empty">暂无法官记录</div>';return}
-  js.log.slice().reverse().forEach(x=>{const d=document.createElement('div');d.className='logline';d.innerHTML='<span class="phase">'+x.phase+'</span><span></span>';d.children[1].textContent=x.text;box.appendChild(d)})
-}
-$('enterJudge').onclick=()=>{
-  const c=Number($('judgeCount').value);loadJ();if(js.count!==c)js=freshJ(c);saveJ();show('judgeApp');renderJ();
-};
-$('judgeNextPhase').onclick=()=>{
-  js.phaseIndex++;
-  if(js.phaseIndex>0) js.day=Math.floor((js.phaseIndex-1)/3)+1;
-  addJ('推进至 '+phaseName());saveJ();renderJ();
-};
-$('addJudgeEvent').onclick=()=>{
-  const ev=$('judgeEvent').value,t=Number($('judgeTarget').value);
-  if(['死亡','放逐','刀','毒','猎人开枪','骑士决斗'].includes(ev)){
-    const p=js.players[t-1]; if(p) p.alive=false;
-  }
-  addJ(ev+'：'+t+'号');renderJ();
-};
-$('addJudgeCustom').onclick=()=>{const v=$('judgeCustom').value.trim();if(v){addJ(v);$('judgeCustom').value=''}};
-$('sheriffSelect').onchange=e=>{js.sheriff=Number(e.target.value);addJ(js.sheriff?'警长设为 '+js.sheriff+'号':'警徽取消')};
-$('judgeNote').oninput=e=>{js.note=e.target.value;saveJ()};
-$('judgeExport').onclick=()=>dl(js,'wolfnote-judge.json');
-$('judgeReset').onclick=()=>{if(confirm('确定清空当前法官对局？')){js=freshJ(js.count);saveJ();renderJ()}};
-$('judgeHome').onclick=()=>show('modeScreen');
+/* player */
+var pKey='custom13',pBoard=BOARDS.custom13,pSelf=1,P=null,pTab='record';
+function pStorageKey(){return 'wolfnote_player_stable_'+pKey+'_'+pSelf}
+function freshPlayer(){return{day:1,status:Array(pBoard.count).fill(0),eliminated:Array(pBoard.count).fill(false),identities:Array(pBoard.count).fill('未判断'),records:[]}}
+function normalizePlayer(x){var f=freshPlayer();if(!x||typeof x!=='object')return f;f.day=Math.max(1,Number(x.day)||1);for(var i=0;i<pBoard.count;i++){f.status[i]=Number(x.status&&x.status[i])||0;f.eliminated[i]=!!(x.eliminated&&x.eliminated[i]);f.identities[i]=(x.identities&&x.identities[i])||'未判断'}if(Array.isArray(x.records)){f.records=x.records.map(function(r){return{s:Number(r.s),t:r.t?Number(r.t):null,a:String(r.a||''),day:Number(r.day||r.d||1)}}).filter(function(r){return r.s&&r.a})}return f}
+function loadPlayer(){try{var raw=localStorage.getItem(pStorageKey());P=raw?normalizePlayer(JSON.parse(raw)):freshPlayer()}catch(e){P=freshPlayer()}}
+function savePlayer(){try{localStorage.setItem(pStorageKey(),JSON.stringify(P))}catch(e){}}
+function playerRoleOptions(){var a=['未判断','平民','狼人','预言家','女巫'];if(pKey==='standard9')return a.concat(['猎人']);if(pKey==='hybrid10')return a.concat(['猎人','混血儿']);if(pKey==='classic12')return a.concat(['猎人','守卫','白狼王']);return a.concat(['守卫','骑士','白狼王','混血儿'])}
+function pActionClass(a){if(['给金水','保','认好'].indexOf(a)>=0)return'green';if(a==='查杀')return'red';if(['踩','怀疑','对跳'].indexOf(a)>=0)return'yellow';if(a==='站边')return'blue';if(['投票给','警徽流'].indexOf(a)>=0)return'purple';return'cyan'}
+function renderPlayerSetup(){var b=BOARDS[$('pBoard').value];$('pDesc').textContent=b.desc;fillNums($('pSelf'),b.count,$('pSelf').value||1)}
+function playerLabels(){return P.eliminated.map(function(x){return x?'已淘汰':''})}
+function fillPlayerSelects(){var labels=playerLabels();fillNums($('pSpeaker'),pBoard.count,$('pSpeaker').value||pSelf,labels);fillNums($('pTarget'),pBoard.count,$('pTarget').value||1,labels);fillNums($('pFilter'),pBoard.count,$('pFilter').value||pSelf,labels)}
+function fillDays(){var s=$('pDay');s.innerHTML='';for(var d=1;d<=20;d++){var o=document.createElement('option');o.value=String(d);o.textContent='第'+d+'天';s.appendChild(o)}s.value=String(Math.min(P.day,20));var f=$('pRecordDay'),old=f.value||'0';f.innerHTML='<option value="0">全部天数</option>';for(var j=1;j<=20;j++){var q=document.createElement('option');q.value=String(j);q.textContent='第'+j+'天';f.appendChild(q)}f.value=old}
+function switchPlayerTab(tab){pTab=tab;['record','players','records'].forEach(function(x){$('pPane'+(x==='record'?'Record':x==='players'?'Players':'Records')).classList.toggle('active',x===tab)});Array.prototype.forEach.call(document.querySelectorAll('[data-ptab]'),function(b){b.classList.toggle('active',b.getAttribute('data-ptab')===tab)});if(tab==='records')renderRecords()}
+function playerFlash(text){var f=$('pFlash');f.textContent=text||'已记录';f.classList.add('show');clearTimeout(playerFlash.timer);playerFlash.timer=setTimeout(function(){f.classList.remove('show')},900)}
+function renderPlayer(){ $('pBoardTitle').textContent=pBoard.name+' · 第'+P.day+'天';$('pSelfLabel').textContent='你是 '+pSelf+'号';fillDays();fillPlayerSelects();renderPlayerCards();renderRecords();renderRecentRecords();switchPlayerTab(pTab) }
+function renderPlayerCards(){var box=$('pPlayers');box.innerHTML='';var roles=playerRoleOptions(),labels=['未判断','好人','狼','观察'];for(var n=1;n<=pBoard.count;n++){(function(num){var idx=num-1,st=P.status[idx]||0,card=document.createElement('div');card.className='player-card'+(P.eliminated[idx]?' eliminated':'');var judge=document.createElement('button');judge.className='judge-btn '+(st===1?'good':st===2?'bad':st===3?'watch':'');judge.innerHTML='<strong>'+num+'号</strong><small>'+labels[st]+(P.eliminated[idx]?' · 已淘汰':'')+'</small>';judge.onclick=function(){P.status[idx]=(st+1)%4;$('pFilter').value=String(num);savePlayer();renderPlayerCards();renderRecords()};var sel=document.createElement('select');sel.className='role-select';roles.forEach(function(r){var o=document.createElement('option');o.value=r;o.textContent=r;if(P.identities[idx]===r)o.selected=true;sel.appendChild(o)});sel.onchange=function(){P.identities[idx]=sel.value;savePlayer();playerFlash(num+'号身份：'+sel.value)};var actions=document.createElement('div');actions.className='player-card-actions';var life=document.createElement('button');life.className='life-btn'+(P.eliminated[idx]?' danger':'');life.textContent=P.eliminated[idx]?'恢复':'淘汰';life.onclick=function(){P.eliminated[idx]=!P.eliminated[idx];savePlayer();renderPlayer();playerFlash(num+'号'+(P.eliminated[idx]?'已淘汰':'已恢复'))};var view=document.createElement('button');view.className='view-btn';view.textContent='记录';view.onclick=function(){$('pFilter').value=String(num);switchPlayerTab('records');renderRecords()};actions.appendChild(life);actions.appendChild(view);card.appendChild(judge);card.appendChild(sel);card.appendChild(actions);box.appendChild(card)})(n)}}
+function makeRecordNode(r){var d=document.createElement('div'),cl=pActionClass(r.a);d.className='record '+cl;d.innerHTML='<strong>'+r.s+'号</strong><span class="badge '+cl+'">'+r.a+'</span>'+(r.t?'<strong>'+r.t+'号</strong>':'')+'<span class="sub" style="margin-left:auto">第'+r.day+'天</span>';return d}
+function renderRecentRecords(){var box=$('pRecentRecords');box.innerHTML='';var arr=P.records.slice(-5).reverse();if(!arr.length){box.innerHTML='<div class="empty">还没有记录</div>';return}arr.forEach(function(r){box.appendChild(makeRecordNode(r))})}
+function renderRecords(){var n=Number($('pFilter').value||pSelf),day=Number($('pRecordDay').value||0),box=$('pRecords');box.innerHTML='';var arr=P.records.filter(function(r){return(r.s===n||r.t===n)&&(!day||r.day===day)}).slice().reverse();if(!arr.length){box.innerHTML='<div class="empty">'+n+'号'+(day?'在第'+day+'天':'')+'暂无相关记录</div>';return}arr.forEach(function(r){box.appendChild(makeRecordNode(r))})}
+function addPlayerRecord(action,target){var s=Number($('pSpeaker').value),t=target?Number(target):null;P.records.push({s:s,t:t,a:action,day:P.day});$('pFilter').value=String(s);savePlayer();renderRecords();renderRecentRecords();playerFlash(s+'号 '+action+(t?' '+t+'号':''))}
+function setPlayerDay(d){P.day=Math.max(1,Math.min(20,Number(d)||1));savePlayer();renderPlayer();playerFlash('已进入第'+P.day+'天')}
+$('pBoard').onchange=renderPlayerSetup;$('goPlayer').onclick=function(){renderPlayerSetup();show('playerSetup')};$('pBack').onclick=function(){show('modeScreen')};$('pHome').onclick=function(){show('modeScreen')};$('pStart').onclick=function(){pKey=$('pBoard').value;pBoard=BOARDS[pKey];pSelf=Number($('pSelf').value);pTab='record';loadPlayer();show('playerApp');renderPlayer()};$('pRecord').onclick=function(){addPlayerRecord($('pAction').value,$('pTarget').value)};Array.prototype.forEach.call(document.querySelectorAll('[data-pa]'),function(b){b.onclick=function(){addPlayerRecord(b.getAttribute('data-pa'),null)}});Array.prototype.forEach.call(document.querySelectorAll('[data-ptab]'),function(b){b.onclick=function(){switchPlayerTab(b.getAttribute('data-ptab'))}});$('pSeeAll').onclick=function(){switchPlayerTab('records')};$('pFilter').onchange=renderRecords;$('pRecordDay').onchange=renderRecords;$('pDay').onchange=function(){setPlayerDay($('pDay').value)};$('pNextDay').onclick=function(){setPlayerDay(P.day+1)};$('pNextDay2').onclick=function(){setPlayerDay(P.day+1)};$('pUndo').onclick=function(){if(P.records.length){P.records.pop();savePlayer();renderRecords();renderRecentRecords();playerFlash('已撤销')}};$('pExport').onclick=function(){var blob=new Blob([JSON.stringify(P,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='wolfnote-player-'+pKey+'-'+pSelf+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},0)};
+renderPlayerSetup();
 
-show('modeScreen');
+/* judge */
+var jKey='custom13',jBoard=BOARDS.custom13,J=null;
+function freshJudge(){return{day:1,night:1,mode:'night',step:0,roles:Array(jBoard.count).fill(null),alive:Array(jBoard.count).fill(true),ids:{hybrid:null,hybridModel:null,knight:null,hunter:null,guard:null,wolves:[],whiteWolf:null,witch:null,seer:null},action:{guard:null,wolf:null,witchChoice:null,witchTarget:null,seer:null},witchSaveUsedAt:null,witchPoisonUsedAt:null,poisonMode:false,sheriff:0,carrySheriff:false,dayStage:null,sheriffCandidates:[],sheriffOriginal:[],sheriffEligible:[],sheriffVotes:{},sheriffVoterIndex:0,sheriffRunoff:false,selectedDeaths:[],exileCandidates:[],exileVotes:{},exileVoterIndex:0,exileRunoff:false,overlay:null,overlayData:null,logs:[]}}
+function jSteps(){return J.night===1?jBoard.firstNight:jBoard.laterNight}function jCurrent(){return jSteps()[J.step]}function jRole(n){return J.roles[n-1]}function jSetRole(n,r){J.roles[n-1]=r}function jClearRole(n){if(n)J.roles[n-1]=null}function jAlive(n){return J.alive[n-1]}
+function jAdd(text){J.logs.push({when:J.mode==='night'?'第'+J.night+'夜':'第'+J.day+'天',text:text});renderJudgeLog()}
+function renderJudgeLog(){var box=$('jLog');box.innerHTML='';if(!J||!J.logs.length){box.innerHTML='<div>暂无记录</div>';return}J.logs.slice().reverse().forEach(function(x){var d=document.createElement('div');d.textContent=x.when+' · '+x.text;box.appendChild(d)})}
+function renderJudgeSetup(){var b=BOARDS[$('jBoard').value];$('jDesc').textContent=b.desc}
+function jMain(title,help,info){$('jTitle').textContent=title;$('jHelp').textContent=help;$('jInfo').textContent=info;$('jContent').innerHTML=''}
+function jChips(items,index){var box=$('jChips');box.innerHTML='';items.forEach(function(x,i){var s=document.createElement('span');s.className='stage-chip'+(i===index?' on':'');s.textContent=x;box.appendChild(s)})}
+function jNum(n,label,fn,opt){opt=opt||{};var b=document.createElement('button');b.type='button';b.className='num'+(opt.selected?' selected':'');b.disabled=!!opt.disabled;b.innerHTML=n+'号'+(label?'<small>'+label+'</small>':'');b.onclick=fn;return b}
+function jSpecial(text,fn,selected){var b=document.createElement('button');b.type='button';b.className='special'+(selected?' selected':'');b.textContent=text;b.onclick=fn;return b}
+function jGrid(title,optFn,click,specialDef){var t=document.createElement('div');t.className='help';t.style.marginBottom='10px';t.textContent=title;$('jContent').appendChild(t);var gr=document.createElement('div');gr.className='stage-grid';for(var n=1;n<=jBoard.count;n++){var o=optFn?optFn(n):{};gr.appendChild(jNum(n,o.label||jRole(n)||'',function(num){return function(){click(num)}}(n),o))}if(specialDef)gr.appendChild(jSpecial(specialDef.text,specialDef.fn,specialDef.selected));$('jContent').appendChild(gr)}
+function renderJudge(){ $('jBoardName').textContent=jBoard.name;$('jBoom').classList.add('hidden');$('jNext').classList.remove('hidden');$('jPrev').disabled=false;if(J.mode==='night')renderNight();else renderDay();renderJudgeLog() }
+function witchText(){var a=J.action;if(a.witchChoice==='save')return'使用解药';if(a.witchChoice==='poison')return a.witchTarget?'毒 '+a.witchTarget+'号':'已选择毒药';if(a.witchChoice==='none')return'都不用';return'未操作'}
+function renderNight(){var s=jCurrent(),m=NIGHT_META[s];$('jDayNight').textContent='第 '+J.night+' 夜';jChips(jSteps().map(function(x){return NIGHT_META[x][0].replace('睁眼','')}),J.step);var info='';if(s==='hybrid')info='混血儿：'+(J.ids.hybrid?J.ids.hybrid+'号':'未确认')+' · 榜样：'+(J.ids.hybridModel?J.ids.hybridModel+'号':'未选');if(s==='knight')info='骑士：'+(J.ids.knight?J.ids.knight+'号':'未确认');if(s==='hunter')info='猎人：'+(J.ids.hunter?J.ids.hunter+'号':'未确认');if(s==='guard')info='守卫：'+(J.ids.guard?J.ids.guard+'号':'未确认')+' · 今晚：'+(J.action.guard===0?'空守':J.action.guard?'守 '+J.action.guard+'号':'未操作');if(s==='wolves')info='狼人：'+(J.ids.wolves.length?J.ids.wolves.map(function(n){return n+'号'}).join('、'):'未确认')+(jBoard.whiteWolf?' · 白狼王：'+(J.ids.whiteWolf?J.ids.whiteWolf+'号':'未确认'):'')+' · 今晚：'+(J.action.wolf===0?'空刀':J.action.wolf?'刀 '+J.action.wolf+'号':'未操作');if(s==='witch')info='女巫：'+(J.ids.witch?J.ids.witch+'号':'未确认')+' · '+witchText()+' · 解药'+(J.witchSaveUsedAt?'已用':'可用')+' / 毒药'+(J.witchPoisonUsedAt?'已用':'可用');if(s==='seer')info='预言家：'+(J.ids.seer?J.ids.seer+'号':'未确认')+' · '+(J.action.seer?'验 '+J.action.seer+'号':'未操作');jMain(m[0],m[1],info);renderNightContent(s);$('jPrev').disabled=J.step===0;$('jNext').textContent=J.step===jSteps().length-1?'结束夜晚':'下一步'}
+function renderNightContent(s){
+ if(s==='hybrid'){jGrid(!J.ids.hybrid?'选择混血儿':'选择榜样',function(n){return{disabled:!J.ids.hybrid&&!!jRole(n),label:jRole(n)||''}},function(n){if(!J.ids.hybrid){if(jRole(n))return;J.ids.hybrid=n;jSetRole(n,'混血儿');jAdd('确认 '+n+'号为混血儿')}else if(n!==J.ids.hybrid){J.ids.hybridModel=n;jAdd('混血儿选择 '+n+'号为榜样')}renderJudge()});return}
+ if(s==='knight'||s==='hunter'){var lab=s==='knight'?'骑士':'猎人';jGrid('选择'+lab,function(n){return{disabled:!!jRole(n),label:jRole(n)||''}},function(n){if(jRole(n))return;J.ids[s]=n;jSetRole(n,lab);jAdd('确认 '+n+'号为'+lab);renderJudge()});return}
+ if(s==='guard'){if(J.night===1&&!J.ids.guard){jGrid('选择守卫',function(n){return{disabled:!!jRole(n),label:jRole(n)||''}},function(n){if(jRole(n))return;J.ids.guard=n;jSetRole(n,'守卫');jAdd('确认 '+n+'号为守卫');renderJudge()})}else{jGrid('选择今晚守护目标',function(n){return{selected:J.action.guard===n,label:jRole(n)||''}},function(n){J.action.guard=n;jAdd('守卫守 '+n+'号');renderJudge()},{text:'空守',selected:J.action.guard===0,fn:function(){J.action.guard=0;jAdd('守卫空守');renderJudge()}})}return}
+ if(s==='wolves'){
+  if(J.night===1&&J.ids.wolves.length<jBoard.wolfCount){jGrid('依次选择 '+jBoard.wolfCount+' 名狼人（'+J.ids.wolves.length+'/'+jBoard.wolfCount+'）',function(n){return{disabled:!!jRole(n),label:jRole(n)||''}},function(n){if(jRole(n))return;J.ids.wolves.push(n);jSetRole(n,'狼人');jAdd('确认 '+n+'号为狼人');renderJudge()});return}
+  if(J.night===1&&jBoard.whiteWolf&&!J.ids.whiteWolf){var t=document.createElement('div');t.className='help';t.textContent='从已确认的狼人中选择白狼王';$('jContent').appendChild(t);var gr=document.createElement('div');gr.className='stage-grid';J.ids.wolves.forEach(function(n){gr.appendChild(jNum(n,'狼人',function(){J.ids.whiteWolf=n;jSetRole(n,'白狼王');jAdd('确认 '+n+'号为白狼王');renderJudge()}))});$('jContent').appendChild(gr);return}
+  jGrid('选择今晚刀口',function(n){return{selected:J.action.wolf===n,label:jRole(n)||''}},function(n){J.action.wolf=n;jAdd('狼人刀 '+n+'号');renderJudge()},{text:'空刀',selected:J.action.wolf===0,fn:function(){J.action.wolf=0;jAdd('狼人空刀');renderJudge()}});return
+ }
+ if(s==='witch'){
+  if(J.night===1&&!J.ids.witch){jGrid('选择女巫',function(n){return{disabled:!!jRole(n),label:jRole(n)||''}},function(n){if(jRole(n))return;J.ids.witch=n;jSetRole(n,'女巫');jAdd('确认 '+n+'号为女巫');renderJudge()});return}
+  var k=document.createElement('div');k.className='info';k.textContent='今晚狼人刀口：'+(J.action.wolf===0?'空刀':J.action.wolf?J.action.wolf+'号':'未记录');$('jContent').appendChild(k);var actions=document.createElement('div');actions.className='stage-actions';var save=document.createElement('button');save.textContent=J.witchSaveUsedAt?'解药已用':'使用解药';save.disabled=!!J.witchSaveUsedAt;if(J.action.witchChoice==='save')save.className='success';save.onclick=function(){if(!J.action.wolf)return alert('今晚没有有效刀口');J.action.witchChoice='save';J.action.witchTarget=null;J.poisonMode=false;J.witchSaveUsedAt=J.night;jAdd('女巫使用解药');renderJudge()};var poison=document.createElement('button');poison.textContent=J.witchPoisonUsedAt?'毒药已用':'使用毒药';poison.disabled=!!J.witchPoisonUsedAt;if(J.action.witchChoice==='poison')poison.className='warn';poison.onclick=function(){J.action.witchChoice='poison';J.action.witchTarget=null;J.poisonMode=true;renderJudge()};var none=document.createElement('button');none.textContent='都不用';if(J.action.witchChoice==='none')none.className='danger';none.onclick=function(){J.action.witchChoice='none';J.action.witchTarget=null;J.poisonMode=false;jAdd('女巫都不用');renderJudge()};actions.appendChild(save);actions.appendChild(poison);actions.appendChild(none);$('jContent').appendChild(actions);if(J.poisonMode){jGrid('选择毒药目标',function(n){return{label:jRole(n)||''}},function(n){J.action.witchChoice='poison';J.action.witchTarget=n;J.poisonMode=false;J.witchPoisonUsedAt=J.night;jAdd('女巫毒 '+n+'号');renderJudge()},{text:'都不用',fn:function(){J.action.witchChoice='none';J.action.witchTarget=null;J.poisonMode=false;jAdd('女巫都不用');renderJudge()}})}return
+ }
+ if(s==='seer'){if(J.night===1&&!J.ids.seer){jGrid('选择预言家',function(n){return{disabled:!!jRole(n),label:jRole(n)||''}},function(n){if(jRole(n))return;J.ids.seer=n;jSetRole(n,'预言家');jAdd('确认 '+n+'号为预言家');renderJudge()})}else{jGrid('选择今晚查验对象',function(n){var bad=['狼人','白狼王'].indexOf(jRole(n))>=0;return{selected:J.action.seer===n,label:J.action.seer===n?(bad?'查杀':'金水'):jRole(n)||''}},function(n){J.action.seer=n;jAdd('预言家验 '+n+'号 → '+(['狼人','白狼王'].indexOf(jRole(n))>=0?'查杀':'金水'));renderJudge()})}}
+}
+function validNight(){var s=jCurrent();if(s==='hybrid')return!!J.ids.hybrid&&!!J.ids.hybridModel;if(s==='knight')return!!J.ids.knight;if(s==='hunter')return!!J.ids.hunter;if(s==='guard')return!!J.ids.guard&&J.action.guard!==null;if(s==='wolves')return J.ids.wolves.length===jBoard.wolfCount&&(!jBoard.whiteWolf||!!J.ids.whiteWolf)&&J.action.wolf!==null;if(s==='witch')return!!J.ids.witch&&J.action.witchChoice!==null&&(J.action.witchChoice!=='poison'||!!J.action.witchTarget);if(s==='seer')return!!J.ids.seer&&!!J.action.seer;return true}
+function resetNightStage(){var s=jCurrent();if(s==='hybrid'){jClearRole(J.ids.hybrid);J.ids.hybrid=null;J.ids.hybridModel=null}if(s==='knight'){jClearRole(J.ids.knight);J.ids.knight=null}if(s==='hunter'){jClearRole(J.ids.hunter);J.ids.hunter=null}if(s==='guard'){if(J.night===1){jClearRole(J.ids.guard);J.ids.guard=null}J.action.guard=null}if(s==='wolves'){if(J.night===1){J.ids.wolves.forEach(jClearRole);J.ids.wolves=[];J.ids.whiteWolf=null}J.action.wolf=null}if(s==='witch'){if(J.night===1){jClearRole(J.ids.witch);J.ids.witch=null}if(J.witchSaveUsedAt===J.night)J.witchSaveUsedAt=null;if(J.witchPoisonUsedAt===J.night)J.witchPoisonUsedAt=null;J.action.witchChoice=null;J.action.witchTarget=null;J.poisonMode=false}if(s==='seer'){if(J.night===1){jClearRole(J.ids.seer);J.ids.seer=null}J.action.seer=null}jAdd('重置当前阶段：'+NIGHT_META[s][0]);renderJudge()}
+function startDay(){J.mode='day';J.day=J.night;J.dayStage=(J.day===1||J.carrySheriff)?'sheriffCandidates':'deaths';J.sheriffCandidates=[];J.sheriffOriginal=[];J.sheriffEligible=[];J.sheriffVotes={};J.sheriffVoterIndex=0;J.sheriffRunoff=false;J.selectedDeaths=[];J.overlay=null;J.overlayData=null;renderJudge()}
+function dayStages(){return(J.day===1||J.carrySheriff)?['sheriffCandidates','sheriffVote','deaths','day','exile']:['deaths','day','exile']}
+function dayName(s){return{sheriffCandidates:'上警登记',sheriffVote:'警长投票',deaths:'公布夜死',day:'白天阶段',exile:'放逐投票'}[s]||'白天'}
+function renderDay(){ $('jDayNight').textContent='第 '+J.day+' 天';jChips(dayStages().map(dayName),Math.max(0,dayStages().indexOf(J.dayStage)));$('jNext').classList.add('hidden');$('jPrev').disabled=true;$('jBoom').classList.remove('hidden');if(J.overlay){renderOverlay();return}if(J.dayStage==='sheriffCandidates')renderSheriffCandidates();else if(J.dayStage==='sheriffVote')renderSheriffVote();else if(J.dayStage==='deaths')renderDeaths();else if(J.dayStage==='day')renderDayMain();else if(J.dayStage==='exile')renderExileVote() }
+function renderSheriffCandidates(){jMain('竞选警长 · 上警登记','点选所有上警玩家。若竞选期间狼人自爆，竞选中断，下一天重新竞选。','警长：'+(J.sheriff?J.sheriff+'号':'暂无'));jGrid('谁上警？可以多选',function(n){return{selected:J.sheriffCandidates.indexOf(n)>=0,disabled:!jAlive(n),label:jRole(n)||''}},function(n){var i=J.sheriffCandidates.indexOf(n);if(i>=0)J.sheriffCandidates.splice(i,1);else J.sheriffCandidates.push(n);renderJudge()});var a=document.createElement('div');a.className='stage-actions two';var none=document.createElement('button');none.textContent='无人上警';none.onclick=function(){J.sheriff=0;J.carrySheriff=false;J.dayStage='deaths';jAdd('无人上警');renderJudge()};var go=document.createElement('button');go.textContent='进入警长投票';go.className='primary';go.onclick=function(){if(!J.sheriffCandidates.length)return alert('请先选择上警玩家');J.sheriffOriginal=J.sheriffCandidates.slice();J.sheriffEligible=Array.from({length:jBoard.count},function(_,i){return i+1}).filter(function(n){return jAlive(n)&&J.sheriffOriginal.indexOf(n)<0});J.sheriffVotes={};J.sheriffVoterIndex=0;J.sheriffRunoff=false;J.dayStage='sheriffVote';jAdd('上警：'+J.sheriffCandidates.map(function(n){return n+'号'}).join('、'));renderJudge()};a.appendChild(none);a.appendChild(go);$('jContent').appendChild(a)}
+function voteCounts(cands,votes){var c={};cands.forEach(function(n){c[n]=0});Object.keys(votes).forEach(function(k){var v=votes[k];if(Object.prototype.hasOwnProperty.call(c,v))c[v]++});return c}
+function renderCounts(c){var b=document.createElement('div');b.className='counts';Object.keys(c).forEach(function(n){var d=document.createElement('div');d.className='count';d.innerHTML='<strong>'+c[n]+'</strong>'+n+'号';b.appendChild(d)});$('jContent').appendChild(b)}
+function renderSheriffVote(){jMain(J.sheriffRunoff?'竞选警长 · PK投票':'竞选警长 · 投票','按警下存活玩家逐个记录警长票；平票进入 PK。','候选：'+J.sheriffCandidates.map(function(n){return n+'号'}).join('、'));var voters=J.sheriffEligible.filter(jAlive),voter=voters[J.sheriffVoterIndex],c=voteCounts(J.sheriffCandidates,J.sheriffVotes);var h=document.createElement('div');h.className='vote-head';h.innerHTML='<strong>'+(voter?'当前投票：'+voter+'号':'投票完成')+'</strong><span class="sub">'+J.sheriffVoterIndex+' / '+voters.length+'</span>';$('jContent').appendChild(h);renderCounts(c);if(voter){var gr=document.createElement('div');gr.className='stage-grid';J.sheriffCandidates.forEach(function(n){gr.appendChild(jNum(n,'当前 '+c[n]+' 票',function(){J.sheriffVotes[voter]=n;J.sheriffVoterIndex++;jAdd(voter+'号警长票 → '+n+'号');renderJudge()}))});gr.appendChild(jSpecial('弃票',function(){J.sheriffVotes[voter]=0;J.sheriffVoterIndex++;jAdd(voter+'号警长票弃票');renderJudge()}));$('jContent').appendChild(gr)}else{var b=document.createElement('button');b.className='primary';b.style.width='100%';b.textContent='结算警长投票';b.onclick=settleSheriff;$('jContent').appendChild(b)}}
+function settleSheriff(){var c=voteCounts(J.sheriffCandidates,J.sheriffVotes),vals=Object.keys(c).map(function(k){return c[k]}),max=vals.length?Math.max.apply(Math,vals):0,top=Object.keys(c).filter(function(k){return c[k]===max}).map(Number);if(top.length===1&&max>0){J.sheriff=top[0];J.carrySheriff=false;J.dayStage='deaths';jAdd(top[0]+'号当选警长');renderJudge();return}if(top.length>1&&!J.sheriffRunoff){J.sheriffRunoff=true;J.sheriffCandidates=top;J.sheriffVotes={};J.sheriffVoterIndex=0;jAdd('警长平票PK：'+top.map(function(n){return n+'号'}).join('、'));renderJudge();return}J.sheriff=0;J.carrySheriff=false;J.dayStage='deaths';jAdd('警长投票无结果，无警长');renderJudge()}
+function nightReference(){return'最近一夜：刀 '+(J.action.wolf===0?'空刀':J.action.wolf?J.action.wolf+'号':'未记')+'；'+(jBoard.firstNight.indexOf('guard')>=0?'守 '+(J.action.guard===0?'空守':J.action.guard?J.action.guard+'号':'未记')+'；':'')+'女巫 '+witchText()}
+function renderDeaths(){jMain('公布天亮死亡','选择要公布的夜间死亡号码，可以多选；无人死亡就点“平安夜”。','如果之前因自爆跳过公布，这里也可以一次补录尚未公布的夜死。 '+nightReference());jGrid('选择死亡号码',function(n){return{selected:J.selectedDeaths.indexOf(n)>=0,disabled:!jAlive(n),label:jRole(n)||''}},function(n){var i=J.selectedDeaths.indexOf(n);if(i>=0)J.selectedDeaths.splice(i,1);else J.selectedDeaths.push(n);renderJudge()});var a=document.createElement('div');a.className='stage-actions two';var safe=document.createElement('button');safe.textContent='平安夜';safe.onclick=function(){J.selectedDeaths=[];J.dayStage='day';jAdd('天亮平安夜');renderJudge()};var ok=document.createElement('button');ok.className='primary';ok.textContent='公布死亡';ok.onclick=function(){if(!J.selectedDeaths.length)return alert('请选择死亡号码，或点“平安夜”');J.selectedDeaths.forEach(function(n){J.alive[n-1]=false});jAdd('天亮死亡：'+J.selectedDeaths.map(function(n){return n+'号'}).join('、'));J.selectedDeaths=[];J.dayStage='day';renderJudge()};a.appendChild(safe);a.appendChild(ok);$('jContent').appendChild(a)}
+function renderDayMain(){jMain('白天阶段','记录白天技能或警徽变化。发言结束后进入放逐投票。','警长：'+(J.sheriff?J.sheriff+'号':'无'));var s=document.createElement('div');s.className='summary-grid';[['预言家',J.ids.seer],['女巫',J.ids.witch],['猎人',J.ids.hunter],['守卫',J.ids.guard],['骑士',J.ids.knight],['混血儿',J.ids.hybrid],['白狼王',J.ids.whiteWolf]].forEach(function(x){if(x[1]){var d=document.createElement('div');d.className='summary-item';d.innerHTML='<small>'+x[0]+'</small><strong>'+x[1]+'号</strong>';s.appendChild(d)}});$('jContent').appendChild(s);var a=document.createElement('div');a.className='stage-actions two';if(jBoard.daySkill==='knight'&&J.ids.knight&&jAlive(J.ids.knight)){var q=document.createElement('button');q.textContent='记录骑士决斗';q.onclick=function(){J.overlay='daySkill';J.overlayData={kind:'骑士决斗'};renderJudge()};a.appendChild(q)}if(jBoard.daySkill==='hunter'&&J.ids.hunter){var h=document.createElement('button');h.textContent='记录猎人开枪';h.onclick=function(){J.overlay='daySkill';J.overlayData={kind:'猎人开枪'};renderJudge()};a.appendChild(h)}var badge=document.createElement('button');badge.textContent='警徽变更';badge.onclick=function(){J.overlay='badge';J.overlayData=null;renderJudge()};a.appendChild(badge);$('jContent').appendChild(a);var go=document.createElement('button');go.className='primary';go.style.width='100%';go.style.marginTop='12px';go.textContent='发言结束 → 进入放逐投票';go.onclick=function(){J.dayStage='exile';J.exileCandidates=Array.from({length:jBoard.count},function(_,i){return i+1}).filter(jAlive);J.exileVotes={};J.exileVoterIndex=0;J.exileRunoff=false;renderJudge()};$('jContent').appendChild(go)}
+function exileVoters(){var v=Array.from({length:jBoard.count},function(_,i){return i+1}).filter(jAlive);if(J.exileRunoff)v=v.filter(function(n){return J.exileCandidates.indexOf(n)<0});return v}
+function renderExileVote(){jMain(J.exileRunoff?'放逐投票 · PK':'放逐投票','逐个记录存活玩家的放逐票；平票进入 PK，再次平票则无人出局。','候选：'+J.exileCandidates.map(function(n){return n+'号'}).join('、'));var voters=exileVoters(),voter=voters[J.exileVoterIndex],c=voteCounts(J.exileCandidates,J.exileVotes);var h=document.createElement('div');h.className='vote-head';h.innerHTML='<strong>'+(voter?'当前投票：'+voter+'号':'本轮投票完成')+'</strong><span class="sub">'+J.exileVoterIndex+' / '+voters.length+'</span>';$('jContent').appendChild(h);renderCounts(c);if(voter){var gr=document.createElement('div');gr.className='stage-grid';J.exileCandidates.forEach(function(n){gr.appendChild(jNum(n,'当前 '+c[n]+' 票',function(){J.exileVotes[voter]=n;J.exileVoterIndex++;jAdd(voter+'号放逐票 → '+n+'号');renderJudge()},{disabled:!jAlive(n)}))});gr.appendChild(jSpecial('弃票',function(){J.exileVotes[voter]=0;J.exileVoterIndex++;jAdd(voter+'号放逐票弃票');renderJudge()}));$('jContent').appendChild(gr)}else{var b=document.createElement('button');b.className='primary';b.style.width='100%';b.textContent='结算放逐投票';b.onclick=settleExile;$('jContent').appendChild(b)}}
+function settleExile(){var c=voteCounts(J.exileCandidates,J.exileVotes),vals=Object.keys(c).map(function(k){return c[k]}),max=vals.length?Math.max.apply(Math,vals):0,top=Object.keys(c).filter(function(k){return c[k]===max}).map(Number);if(top.length===1&&max>0){var out=top[0];J.alive[out-1]=false;jAdd(out+'号被放逐');nextNight(false);return}if(top.length>1&&!J.exileRunoff){J.exileRunoff=true;J.exileCandidates=top;J.exileVotes={};J.exileVoterIndex=0;jAdd('放逐平票PK：'+top.map(function(n){return n+'号'}).join('、'));renderJudge();return}jAdd('放逐再次平票/无结果，无人出局');nextNight(false)}
+function renderOverlay(){if(J.overlay==='boomPick'){jMain('狼人自爆','选择哪一名狼人自爆。普通狼人确认后直接天黑；白狼王先选择带人目标。','警长竞选期间自爆会中断竞选，并在下一天重新竞选。');var gr=document.createElement('div');gr.className='stage-grid';J.ids.wolves.filter(jAlive).forEach(function(n){gr.appendChild(jNum(n,n===J.ids.whiteWolf?'白狼王':'狼人',function(){chooseExplosion(n)}))});$('jContent').appendChild(gr);appendCancelOverlay();return}if(J.overlay==='whiteWolfTarget'){jMain('白狼王自爆','选择白狼王带走的玩家，或选择不带人。','选择完成后自动进入天黑。');var wolf=J.overlayData.wolf;jGrid('白狼王带走谁？',function(n){return{disabled:!jAlive(n)||n===wolf,label:jRole(n)||''}},function(n){J.alive[n-1]=false;jAdd('白狼王 '+wolf+'号自爆，带走 '+n+'号'+(J.overlayData.inSheriff?'；警长竞选中断':''));J.overlay=null;nextNight(true)},{text:'不带人',fn:function(){jAdd('白狼王 '+wolf+'号自爆，不带人'+(J.overlayData.inSheriff?'；警长竞选中断':''));J.overlay=null;nextNight(true)}});return}if(J.overlay==='daySkill'){var kind=J.overlayData.kind;jMain(kind,'选择目标，或者选择“不发动”。','这里只做法官记录。');jGrid('选择目标',function(n){return{disabled:!jAlive(n),label:jRole(n)||''}},function(n){jAdd(kind+' → '+n+'号');if(kind==='猎人开枪')J.alive[n-1]=false;J.overlay=null;renderJudge()},{text:'不发动',fn:function(){jAdd(kind+'：不发动');J.overlay=null;renderJudge()}});appendCancelOverlay();return}if(J.overlay==='badge'){jMain('警徽变更','选择新的警长，或撕掉警徽。','当前警长：'+(J.sheriff?J.sheriff+'号':'无'));jGrid('选择新警长',function(n){return{disabled:!jAlive(n),label:jRole(n)||''}},function(n){J.sheriff=n;jAdd('警徽移交给 '+n+'号');J.overlay=null;renderJudge()},{text:'撕警徽',fn:function(){J.sheriff=0;jAdd('警徽被撕');J.overlay=null;renderJudge()}});appendCancelOverlay()}}
+function appendCancelOverlay(){var b=document.createElement('button');b.style.marginTop='14px';b.textContent='取消并返回';b.onclick=function(){J.overlay=null;J.overlayData=null;renderJudge()};$('jContent').appendChild(b)}
+function startExplosion(){var wolves=J.ids.wolves.filter(jAlive);if(!wolves.length)return alert('当前没有已确认且存活的狼人');J.overlay='boomPick';J.overlayData=null;renderJudge()}
+function chooseExplosion(n){var inSheriff=J.dayStage==='sheriffCandidates'||J.dayStage==='sheriffVote';if(inSheriff)J.carrySheriff=true;J.alive[n-1]=false;if(jBoard.whiteWolf&&n===J.ids.whiteWolf){J.overlay='whiteWolfTarget';J.overlayData={wolf:n,inSheriff:inSheriff};renderJudge()}else{jAdd(n+'号狼人自爆'+(inSheriff?'；警长竞选中断':''));J.overlay=null;nextNight(true)}}
+function nextNight(fromExplosion){J.night++;J.day=J.night;J.mode='night';J.step=0;J.action={guard:null,wolf:null,witchChoice:null,witchTarget:null,seer:null};J.poisonMode=false;J.dayStage=null;J.overlay=null;J.overlayData=null;J.exileCandidates=[];J.exileVotes={};J.exileVoterIndex=0;jAdd((fromExplosion?'因自爆，':'')+'进入第'+J.night+'夜');renderJudge()}
+function resetDayStage(){if(J.overlay){J.overlay=null;J.overlayData=null;jAdd('取消当前临时操作');renderJudge();return}if(J.dayStage==='sheriffCandidates')J.sheriffCandidates=[];else if(J.dayStage==='sheriffVote'){J.sheriffVotes={};J.sheriffVoterIndex=0}else if(J.dayStage==='deaths')J.selectedDeaths=[];else if(J.dayStage==='exile'){J.exileCandidates=Array.from({length:jBoard.count},function(_,i){return i+1}).filter(jAlive);J.exileVotes={};J.exileVoterIndex=0;J.exileRunoff=false}jAdd('重置当前阶段：'+dayName(J.dayStage));renderJudge()}
+$('goJudge').onclick=function(){renderJudgeSetup();show('judgeSetup')};$('jBoard').onchange=renderJudgeSetup;$('jBack').onclick=function(){show('modeScreen')};$('jHome').onclick=function(){show('modeScreen')};$('jStart').onclick=function(){jKey=$('jBoard').value;jBoard=BOARDS[jKey];J=freshJudge();show('judgeApp');renderJudge()};$('jRestart').onclick=function(){if(confirm('确定重新开始当前板子？')){J=freshJudge();renderJudge()}};$('jReset').onclick=function(){if(J.mode==='night')resetNightStage();else resetDayStage()};$('jNext').onclick=function(){if(J.mode!=='night')return;if(!validNight())return alert('当前阶段还没有完成');if(J.step<jSteps().length-1){J.step++;J.poisonMode=false;renderJudge()}else{jAdd('夜间结束');startDay()}};$('jPrev').onclick=function(){if(J.mode==='night'&&J.step>0){J.step--;J.poisonMode=false;renderJudge()}};$('jBoom').onclick=startExplosion;
+renderJudgeSetup();
+}catch(err){fatal(err)}
 })();
 </script>
 </body>
